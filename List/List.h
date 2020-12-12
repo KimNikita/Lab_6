@@ -109,13 +109,13 @@ TList<T>::~TList()
 }
 
 template <class T>
-TList<T>& TList<T>::operator =(TList<T>& _v)
+TList<T>& TList<T>::operator=(TList<T>& _v)
 {
   if (this == &_v)
     return *this;
 
   this->~TList();
-  this->TList(-v);
+  this->TList(_v);
 }
 
 template<class T>
