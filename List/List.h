@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ListElem.h"
+#include "ListIterator.h"
 #include <vector>
 
-template <class T2>
-class ListIterator;
+template <class T>
+class TListIterator;
 
 template <class T>
 class TList
@@ -25,13 +26,15 @@ public:
   void Ins(TListElem<T>* e, T d);
 
   bool IsEmpty(void) const;
-
   bool IsFull(void) const;
+
+  TListIterator<T> begin();
 
   TListElem<T>* GetFirst();
   TListElem<T>* GetLast();
 
   int GetCount();
+
   void DelFirst();
   void DelLast();
   void Del(TListElem<T>* e);
@@ -44,9 +47,14 @@ public:
   //доп задания
 
   vector<int> ElemsModKEqualsZero(int k);
+
   void WriteToFile(string name);
+
   template <class T1>
   friend ofstream& operator<<(ofstream& ofstr, const TList<T1>& L);
+
+  template <class T>
+  friend class TListIterator;
 };
 
 template<class T>
@@ -60,7 +68,7 @@ inline TList<T>::TList()
 template <class T>
 TList<T>::TList(TList<T>& _v)
 {
-  count = _v.count;
+  this->count = _v.count;
 
   TListElem<T>* i = _v.root;
   TListElem<T>* j = this->root;
@@ -70,6 +78,7 @@ TList<T>::TList(TList<T>& _v)
   {
     j = new TListElem<T>(*i);
     j->SetNext(0);
+
     if (p != 0)
     {
       p->SetNext(j);
@@ -77,11 +86,10 @@ TList<T>::TList(TList<T>& _v)
     }
 
     p = j;
+    end = j;
 
     if (root == 0)
       root = j;
-
-    end = j;
 
     i = i->next();
   }
@@ -90,9 +98,9 @@ TList<T>::TList(TList<T>& _v)
 template <class T>
 TList<T>::~TList()
 {
-  if (this->root != 0)
+  if (root != 0)
   {
-    TListElem<T>* i = this->root;
+    TListElem<T>* i = root;
     TListElem<T>* p = 0;
 
     while (i != 0)
@@ -102,8 +110,8 @@ TList<T>::~TList()
       delete p;
     }
 
-    this->root = 0;
-    this->end = 0;
+    root = 0;
+    end = 0;
     count = 0;
   }
 }
@@ -123,11 +131,14 @@ inline void TList<T>::InsFirst(T d)
 {
   if (this->IsFull())
     throw - 1;
+
   TListElem<T>* tmp = new TListElem<T>(d);
   tmp->SetNext(root);
   root = tmp;
+
   if (end == 0)
     end = tmp;
+
   count++;
 }
 
@@ -136,15 +147,20 @@ inline void TList<T>::InsLast(T d)
 {
   if (this->IsFull())
     throw - 1;
+
   TListElem<T>* tmp = new TListElem<T>(d);
+
   if (end != 0)
   {
     end->SetNext(tmp);
     tmp->SetPrev(end);
   }
+
   end = tmp;
+
   if (root == 0)
     root = tmp;
+
   count++;
 }
 
@@ -153,13 +169,16 @@ inline void TList<T>::Ins(TListElem<T>* e, T d)
 {
   if (this->IsFull())
     throw - 1;
+
   TListElem<T>* tmp = new TListElem<T>(d);
   tmp->SetNext(e->GetNext());
   tmp->SetPrev(e);
+
   if (e->GetNext() != 0)
     e->GetNext()->SetPrev(tmp);
   else
     end = tmp;
+
   e->SetNext(tmp);
   count++;
 }
@@ -186,6 +205,12 @@ inline bool TList<T>::IsFull(void) const
 }
 
 template<class T>
+inline TListIterator<T> TList<T>::begin()
+{
+  return TListIterator<T>(root);
+}
+
+template<class T>
 inline TListElem<T>* TList<T>::GetFirst()
 {
   return root;
@@ -202,6 +227,7 @@ inline void TList<T>::DelFirst()
 {
   if (this->IsEmpty())
     throw - 1;
+
   TListElem<T>* i = root;
   root = root->GetNext();
   count--;
@@ -213,6 +239,7 @@ inline void TList<T>::DelLast()
 {
   if (this->IsEmpty())
     throw - 1;
+
   TListElem<T>* i = end;
   end = end->GetPrev();
   end->SetNext(0);
@@ -225,6 +252,7 @@ inline void TList<T>::Del(TListElem<T>* e)
 {
   if (this->IsEmpty())
     throw - 1;
+
   e->GetPrev()->SetNext(e->GetNext());
   e->GetNext()->SetPrev(e->GetPrev());
 
@@ -240,6 +268,8 @@ inline int TList<T>::GetCount()
 
 template <class T1>
 ostream& operator<<(ostream& ostr, const TList<T1>& L) {
+  if (L.IsEmpty())
+    return ostr;
 
   TListElem<T1>* i = L.root;
   while (i != 0)
@@ -247,11 +277,15 @@ ostream& operator<<(ostream& ostr, const TList<T1>& L) {
     ostr << *i << endl;
     i = i->GetNext();
   }
+
   return ostr;
 }
 
 template <class T1>
 istream& operator>>(istream& istr, TList<T1>& L) {
+  if (L.IsFull())
+    throw - 1;
+
   int count;
   istr >> count;
   for (int i = 0; i < count; i++)
@@ -260,6 +294,7 @@ istream& operator>>(istream& istr, TList<T1>& L) {
     istr >> d;
     L.InsLast(d);
   }
+
   return istr;
 }
 
@@ -268,16 +303,15 @@ istream& operator>>(istream& istr, TList<T1>& L) {
 template<class T>
 vector<int> TList<T>::ElemsModKEqualsZero(int k)
 {
-  if (this->root == 0)
-    throw new std::exception();
-  TListElem<T>* elem = this->root;
   vector<int> res;
-  while (elem != 0)
-  {
-    if (elem->GetData() % k == 0)
-      res.push_back(elem->GetData());
-    elem = elem->GetNext();
-  }
+
+  if (this->IsEmpty())
+    return res;
+
+  for (TListIterator<int> itr = this->begin(); !itr.IsEmpty(); ++itr)
+    if (*itr % k == 0)
+      res.push_back(*itr);
+
   return res;
 }
 
@@ -290,45 +324,13 @@ inline void TList<T>::WriteToFile(string name)
 }
 
 template<class T1>
-inline ofstream& operator<<(ofstream& ofstr, const TList<T1>& L)
+inline ofstream& operator<<(ofstream& ofstr, TList<T1>& L)
 {
-  TListElem<T1>* i = L.root;
-  while (i != 0)
-  {
-    ofstr << *i;
-    i = i->GetNext();
-  }
+  if (L.IsEmpty())
+    return ofstr;
+
+  for (TListIterator<int> itr = L.begin(); !itr.IsEmpty(); ++itr)
+    ofstr << *itr;
+
   return ofstr;
 }
-
-template <class T2>
-class ListIterator
-{
-private:
-  TListElem<T2>* cur;
-public:
-  ListIterator(TListElem<T2>* itr)
-  {
-    cur = itr;
-  }
-  void operator++()
-  {
-    cur = cur->GetNext();
-  }
-  void operator--()
-  {
-    cur = cur->GetPrev();
-  }
-  bool empty()
-  {
-    return cur == 0;
-  }
-  TListElem<T2>* elem()
-  {
-    return cur;
-  }
-  T2 operator*()
-  {
-    return cur->GetData();
-  }
-};

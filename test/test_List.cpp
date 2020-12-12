@@ -44,14 +44,14 @@ TEST(TList, can_correctly_ins)
   {
     L.InsLast(i + 1);
   }
-  ListIterator<int> iterator(L.GetFirst());
+  TListIterator<int> iterator = L.begin();
   for (int i = 1; i < size / 2 + size % 2; i++)
   {
     ++iterator;
   }
   for (int i = 0; i < size; i++)
   {
-    L.Ins(iterator.elem(), i + 1);
+    L.Ins(iterator.elem, i + 1);
     ++iterator;
   }
   for (int i = 0; i < size / 2 + size % 2; i++)
@@ -111,14 +111,14 @@ TEST(TList, can_correctly_del)
   {
     L.InsLast(i + 1);
   }
-  ListIterator<int> iterator(L.GetFirst());
+  TListIterator<int> iterator = L.begin();
   for (int i = 0; i < size / 4 + size % 2; i++)
   {
     ++iterator;
   }
   for (int i = 0; i < size / 2; i++)
   {
-    TListElem<int>* tmp = iterator.elem();
+    TListElem<int>* tmp = iterator.elem;
     ++iterator;
     L.Del(tmp);
   }
@@ -146,9 +146,8 @@ TEST(TList, can_use_iterator)
     expS += (i + 1) + '0';
     L.InsLast(i + 1);
   }
-  ListIterator<int> iterator(L.GetFirst());
   string res = "";
-  for (; !iterator.empty(); ++iterator)
+  for (TListIterator<int> iterator = L.begin(); !iterator.IsEmpty(); ++iterator)
   {
     res += *iterator + '0';
   }

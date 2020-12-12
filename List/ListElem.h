@@ -16,7 +16,8 @@ public:
   TListElem(T _data);
   ~TListElem();
 
-  T GetData();
+  T& GetData();
+
   TListElem* GetNext();
   TListElem* GetPrev();
 
@@ -35,7 +36,7 @@ public:
 template<class T>
 inline TListElem<T>::TListElem(T _data)
 {
-  data = _data;
+  this->data = _data;
   next = 0;
   prev = 0;
 }
@@ -48,7 +49,7 @@ inline TListElem<T>::~TListElem()
 }
 
 template<class T>
-inline T TListElem<T>::GetData()
+inline T& TListElem<T>::GetData()
 {
   return data;
 }
@@ -68,19 +69,19 @@ inline TListElem<T>* TListElem<T>::GetPrev()
 template<class T>
 inline void TListElem<T>::SetData(T _data)
 {
-  data = _data;
+  this->data = _data;
 }
 
 template<class T>
 inline void TListElem<T>::SetNext(TListElem<T>* _next)
 {
-  next = _next;
+  this->next = _next;
 }
 
 template<class T>
 inline void TListElem<T>::SetPrev(TListElem<T>* _prev)
 {
-  prev = _prev;
+  this->prev = _prev;
 }
 
 template<class T1>
