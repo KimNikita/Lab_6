@@ -1,22 +1,15 @@
 #include <iostream>
-#include "Stack.h"
-#include "Queue.h"
+#include "List.h"
+
+using namespace std;
 
 int main()
 {
-  TList<int> s(3);
-  TQueue<int> q(3);
-  s.Push(1);
-  s.Push(2);
-  s.Push(3);
-  s.Pop();
-  cout << s << endl;
-  q.Push(1);
-  q.Push(2);
-  q.Push(3);
-  q.Pop();
-  q.Push(4);
-  cout << q;
-
+  TList<int> a;
+  a.InsFirst(1);
+  a.Ins(a.GetFirst(), 2);
+  a.InsFirst(3);
+  a.InsLast(4);
+  cout << a;
   return 0;
 }

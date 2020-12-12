@@ -1,6 +1,10 @@
 #pragma once
 
 #include "ListElem.h"
+#include <vector>
+
+template <class T2>
+class ListIterator;
 
 template <class T>
 class TList
@@ -33,12 +37,16 @@ public:
   void Del(TListElem<T>* e);
 
   template <class T1>
-  friend ostream& operator<< (ostream& ostr, const TList<T1>& A);
+  friend ostream& operator<<(ostream& ostr, const TList<T1>& L);
   template <class T1>
-  friend istream& operator >> (istream& istr, TList<T1>& A);
+  friend istream& operator>>(istream& istr, TList<T1>& L);
 
-  //
-  int countOfDivisible(T m);
+  //доп задания
+
+  vector<int> ElemsModKEqualsZero(int k);
+  void WriteToFile(string name);
+  template <class T1>
+  friend ofstream& operator<<(ofstream& ofstr, const TList<T1>& L);
 };
 
 template<class T>
@@ -125,7 +133,11 @@ template<class T>
 inline void TList<T>::InsLast(T d)
 {
   TListElem<T>* tmp = new TListElem<T>(d);
-  end->SetNext(tmp);
+  if (end != 0)
+  {
+    end->SetNext(tmp);
+    tmp->SetPrev(end);
+  }
   end = tmp;
   if (root == 0)
     root = tmp;
@@ -138,7 +150,10 @@ inline void TList<T>::Ins(TListElem<T>* e, T d)
   TListElem<T>* tmp = new TListElem<T>(d);
   tmp->SetNext(e->GetNext());
   tmp->SetPrev(e);
-  e->GetNext()->SetPrev(tmp);
+  if (e->GetNext() != 0)
+    e->GetNext()->SetPrev(tmp);
+  else
+    end = tmp;
   e->SetNext(tmp);
   count++;
 }
@@ -190,6 +205,7 @@ inline void TList<T>::DelLast()
 {
   TListElem<T>* i = end;
   end = end->GetPrev();
+  end->SetNext(0);
   count--;
   delete i;
 }
@@ -211,9 +227,9 @@ inline int TList<T>::GetCount()
 }
 
 template <class T1>
-ostream& operator<<(ostream& ostr, const TList<T1>& A) {
+ostream& operator<<(ostream& ostr, const TList<T1>& L) {
 
-  TListElem<T1>* i = A.root;
+  TListElem<T1>* i = L.root;
   while (i != 0)
   {
     ostr << *i << endl;
@@ -223,32 +239,84 @@ ostream& operator<<(ostream& ostr, const TList<T1>& A) {
 }
 
 template <class T1>
-istream& operator>>(istream& istr, TList<T1>& A) {
+istream& operator>>(istream& istr, TList<T1>& L) {
   int count;
   istr >> count;
   for (int i = 0; i < count; i++)
   {
     T1 d;
     istr >> d;
-    A.InsLast(d);
+    L.InsLast(d);
   }
   return istr;
 }
 
-//
+//доп задания
 
 template<class T>
-int TList<T>::countOfDivisible(T m)
-{/// Написать метод ищущий сколько элементов списка кратны M
+vector<int> TList<T>::ElemsModKEqualsZero(int k)
+{
   if (this->root == 0)
     throw new std::exception();
   TListElem<T>* elem = this->root;
-  int ans = 0;
+  vector<int> res;
   while (elem != 0)
   {
-    if (elem->getData() % m == 0)
-      ans++;
+    if (elem->GetData() % k == 0)
+      res.push_back(elem->GetData());
     elem = elem->GetNext();
   }
-  return ans;
+  return res;
 }
+
+template<class T>
+inline void TList<T>::WriteToFile(string name)
+{
+  ofstream fout(name.c_str());
+  fout << *this;
+  fout.close();
+}
+
+template<class T1>
+inline ofstream& operator<<(ofstream& ofstr, const TList<T1>& L)
+{
+  TListElem<T1>* i = L.root;
+  while (i != 0)
+  {
+    ofstr << *i;
+    i = i->GetNext();
+  }
+  return ofstr;
+}
+
+template <class T2>
+class ListIterator
+{
+private:
+  TListElem<T2>* cur;
+public:
+  ListIterator(TListElem<T2>* itr)
+  {
+    cur = itr;
+  }
+  void operator++()
+  {
+    cur = cur->GetNext();
+  }
+  void operator--()
+  {
+    cur = cur->GetPrev();
+  }
+  bool empty()
+  {
+    return cur == 0;
+  }
+  TListElem<T2>* elem()
+  {
+    return cur;
+  }
+  T2 operator*()
+  {
+    return cur->GetData();
+  }
+};

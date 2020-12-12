@@ -2,68 +2,189 @@
 #include <fstream>
 #include <../gtest/gtest.h>
 
-TEST(TList, can_create_list_positive_size)
+TEST(TList, can_create_list)
 {
-  ASSERT_NO_THROW(TList<int>(3));
+  ASSERT_NO_THROW(TList<int>());
 }
 
-TEST(TList, throw_when_create_list_negative_size)
+TEST(TList, can_correctly_ins_first)
 {
-  ASSERT_ANY_THROW(TList<int>(-3));
+  const int size = 4;
+  vector<int> expE;
+  TList<int> L;
+  for (int i = 0; i < size; i++)
+  {
+    L.InsFirst(i + 1);
+    expE.push_back(size - i);
+  }
+  vector<int>res = L.ElemsModKEqualsZero(1);
+  EXPECT_EQ(expE, res);
 }
 
-TEST(TList, can_push_any_elements)
+TEST(TList, can_correctly_ins_last)
 {
-  TList<int> S(4);
-  S.Push(1);
-  S.Push(2);
-  EXPECT_EQ(2, S.Get());
+  const int size = 4;
+  vector<int> expE;
+  TList<int> L;
+  for (int i = 0; i < size; i++)
+  {
+    L.InsLast(i + 1);
+    expE.push_back(i + 1);
+  }
+  vector<int>res = L.ElemsModKEqualsZero(1);
+  EXPECT_EQ(expE, res);
 }
 
-TEST(TList, can_pop_any_elements)
+TEST(TList, can_correctly_ins)
 {
-  TList<int> S(4);
-  S.Push(1);
-  S.Push(2);
-  S.Push(3);
-  S.Pop();
-  S.Pop();
-  EXPECT_EQ(1, S.Get());
+  const int size = 4;
+  vector<int> expE;
+  TList<int> L;
+  for (int i = 0; i < size; i++)
+  {
+    L.InsLast(i + 1);
+  }
+  ListIterator<int> iterator(L.GetFirst());
+  for (int i = 1; i < size / 2 + size % 2; i++)
+  {
+    ++iterator;
+  }
+  for (int i = 0; i < size; i++)
+  {
+    L.Ins(iterator.elem(), i + 1);
+    ++iterator;
+  }
+  for (int i = 0; i < size / 2 + size % 2; i++)
+  {
+    expE.push_back(i + 1);
+  }
+  for (int i = 0; i < size; i++)
+  {
+    expE.push_back(i + 1);
+  }
+  for (int i = size / 2 + size % 2; i < size; i++)
+  {
+    expE.push_back(i + 1);
+  }
+  vector<int>res = L.ElemsModKEqualsZero(1);
+  EXPECT_EQ(expE, res);
 }
 
-//доп задачи
-
-TEST(TList, can_find_max_element)
+TEST(TList, can_correctly_del_first)
 {
-  TList<int> S(4);
-  S.Push(1);
-  S.Push(2);
-  S.Push(-1);
-  EXPECT_EQ(2, S.GetMaxElem());
+  const int size = 4;
+  vector<int> expE;
+  TList<int> L;
+  L.InsLast(1);
+  for (int i = 1; i < size; i++)
+  {
+    L.InsLast(i + 1);
+    expE.push_back(i + 1);
+  }
+  L.DelFirst();
+  vector<int>res = L.ElemsModKEqualsZero(1);
+  EXPECT_EQ(expE, res);
 }
 
-TEST(TList, can_find_min_element)
+TEST(TList, can_correctly_del_last)
 {
-  TList<int> S(4);
-  S.Push(1);
-  S.Push(2);
-  S.Push(-1);
-  EXPECT_EQ(-1, S.GetMinElem());
+  const int size = 4;
+  vector<int> expE;
+  TList<int> L;
+  for (int i = 0; i < size - 1; i++)
+  {
+    L.InsLast(i + 1);
+    expE.push_back(i + 1);
+  }
+  L.InsLast(size);
+  L.DelLast();
+  vector<int>res = L.ElemsModKEqualsZero(1);
+  EXPECT_EQ(expE, res);
+}
+
+TEST(TList, can_correctly_del)
+{
+  const int size = 8;
+  vector<int> expE;
+  TList<int> L;
+  for (int i = 0; i < size; i++)
+  {
+    L.InsLast(i + 1);
+  }
+  ListIterator<int> iterator(L.GetFirst());
+  for (int i = 0; i < size / 4 + size % 2; i++)
+  {
+    ++iterator;
+  }
+  for (int i = 0; i < size / 2; i++)
+  {
+    TListElem<int>* tmp = iterator.elem();
+    ++iterator;
+    L.Del(tmp);
+  }
+  for (int i = 0; i < size / 4 + size % 2; i++)
+  {
+    expE.push_back(i + 1);
+  }
+  for (int i = size / 2 + size / 4 + size % 2; i < size; i++)
+  {
+    expE.push_back(i + 1);
+  }
+  vector<int>res = L.ElemsModKEqualsZero(1);
+  EXPECT_EQ(expE, res);
+}
+
+//доп задания
+
+TEST(TList, can_use_iterator)
+{
+  const int size = 4;
+  TList<int> L;
+  string expS = "";
+  for (int i = 0; i < size; i++)
+  {
+    expS += (i + 1) + '0';
+    L.InsLast(i + 1);
+  }
+  ListIterator<int> iterator(L.GetFirst());
+  string res = "";
+  for (; !iterator.empty(); ++iterator)
+  {
+    res += *iterator + '0';
+  }
+  EXPECT_EQ(expS, res);
+}
+
+TEST(TList, can_find_elems_mod_k_equals_0)
+{
+  const int size = 4;
+  int k = 2;
+  vector<int> expE;
+  TList<int> L;
+  for (int i = 0; i < size; i++)
+  {
+    L.InsLast(i + 1);
+    if ((i + 1) % k == 0)
+      expE.push_back(i + 1);
+  }
+  vector<int> res;
+  res = L.ElemsModKEqualsZero(k);
+  EXPECT_EQ(expE, res);
 }
 
 TEST(TList, can_write_list_to_file)
 {
-  const int size = 9;
-  TList<int> S(size);
-  for (int i = 0; i < size / 2; i++)
-    S.Push(i);
-  S.WriteToFile("output_s.txt");
-  string expS = "0123";
-  string Stack = "";
-  ifstream fin("output_s.txt");
-  fin >> Stack;
+  const int size = 4;
+  TList<int> L;
+  for (int i = 0; i < size; i++)
+    L.InsLast(i + 1);
+  L.WriteToFile("output.txt");
+  string expL = "1234";
+  string List = "";
+  ifstream fin("output.txt");
+  fin >> List;
   fin.close();
-  EXPECT_EQ(expS, Stack);
+  EXPECT_EQ(expL, List);
 }
 
 

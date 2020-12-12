@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -23,11 +24,12 @@ public:
   void SetNext(TListElem* _next);
   void SetPrev(TListElem* _prev);
 
-
   template <class T1>
-  friend ostream& operator<< (ostream& ostr, const TListElem<T1>& A);
+  friend ostream& operator<< (ostream& ostr, const TListElem<T1>& E);
   template <class T1>
-  friend istream& operator >> (istream& istr, TListElem<T1>& A);
+  friend istream& operator >> (istream& istr, TListElem<T1>& E);
+  template <class T1>
+  friend ofstream& operator<<(ofstream& ofstr, const TListElem<T1>& E);
 };
 
 template<class T>
@@ -82,15 +84,22 @@ inline void TListElem<T>::SetPrev(TListElem<T>* _prev)
 }
 
 template<class T1>
-inline ostream& operator<<(ostream& ostr, const TListElem<T1>& A)
+inline ostream& operator<<(ostream& ostr, const TListElem<T1>& E)
 {
-  ostr << A.data;
+  ostr << E.data;
   return ostr;
 }
 
 template<class T1>
-inline istream& operator>>(istream& istr, TListElem<T1>& A)
+inline istream& operator>>(istream& istr, TListElem<T1>& E)
 {
-  istr >> A.data;
+  istr >> E.data;
   return istr;
+}
+
+template<class T1>
+inline ofstream& operator<<(ofstream& ofstr, const TListElem<T1>& E)
+{
+  ofstr << E.data;
+  return ofstr;
 }
