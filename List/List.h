@@ -171,15 +171,15 @@ inline void TList<T>::Ins(TListIterator<T> e, T d)
     throw - 1;
 
   TListElem<T>* tmp = new TListElem<T>(d);
-  tmp->SetNext(e.get()->GetNext());
-  tmp->SetPrev(e.get());
+  tmp->SetNext(e.elem->GetNext());
+  tmp->SetPrev(e.elem);
 
-  if (e.get()->GetNext() != 0)
-    e.get()->GetNext()->SetPrev(tmp);
+  if (e.elem->GetNext() != 0)
+    e.elem->GetNext()->SetPrev(tmp);
   else
     end = tmp;
 
-  e.get()->SetNext(tmp);
+  e.elem->SetNext(tmp);
   count++;
 }
 
@@ -253,11 +253,11 @@ inline void TList<T>::Del(TListIterator<T> e)
   if (this->IsEmpty())
     throw - 1;
 
-  e.get()->GetPrev()->SetNext(e.get()->GetNext());
-  e.get()->GetNext()->SetPrev(e.get()->GetPrev());
+  e.elem->GetPrev()->SetNext(e.elem->GetNext());
+  e.elem->GetNext()->SetPrev(e.elem->GetPrev());
 
   count--;
-  delete e.get();
+  delete e.elem;
 }
 
 template<class T>

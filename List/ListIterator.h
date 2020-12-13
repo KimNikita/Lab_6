@@ -6,6 +6,8 @@ using namespace std;
 
 template <class T1>
 class TListElem;
+template <class T1>
+class TList;
 
 template <class T>
 class TListIterator
@@ -20,12 +22,15 @@ public:
   TListIterator<T>& operator =(const TListIterator<T>& _v);
 
   bool IsEmpty();
-  TListElem<T>* get();
 
   TListIterator<T>& operator++();
   TListIterator<T>& operator--();
   T& operator*(int);
   T& operator*();
+
+  template <class T1>
+  friend class TList;
+
 };
 
 template<class T>
@@ -56,12 +61,6 @@ template<class T>
 inline bool TListIterator<T>::IsEmpty()
 {
   return elem == 0;
-}
-
-template<class T>
-inline TListElem<T>* TListIterator<T>::get()
-{
-  return elem;
 }
 
 template<class T>
