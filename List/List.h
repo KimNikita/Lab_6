@@ -23,7 +23,7 @@ public:
 
   void InsFirst(T d);
   void InsLast(T d);
-  void Ins(TListElem<T>* e, T d);
+  void Ins(TListIterator<T> e, T d);
 
   bool IsEmpty(void) const;
   bool IsFull(void) const;
@@ -37,7 +37,7 @@ public:
 
   void DelFirst();
   void DelLast();
-  void Del(TListElem<T>* e);
+  void Del(TListIterator<T> e);
 
   template <class T1>
   friend ostream& operator<<(ostream& ostr, const TList<T1>& L);
@@ -165,21 +165,21 @@ inline void TList<T>::InsLast(T d)
 }
 
 template<class T>
-inline void TList<T>::Ins(TListElem<T>* e, T d)
+inline void TList<T>::Ins(TListIterator<T> e, T d)
 {
   if (this->IsFull())
     throw - 1;
 
   TListElem<T>* tmp = new TListElem<T>(d);
-  tmp->SetNext(e->GetNext());
-  tmp->SetPrev(e);
+  tmp->SetNext(e.get()->GetNext());
+  tmp->SetPrev(e.get());
 
-  if (e->GetNext() != 0)
-    e->GetNext()->SetPrev(tmp);
+  if (e.get()->GetNext() != 0)
+    e.get()->GetNext()->SetPrev(tmp);
   else
     end = tmp;
 
-  e->SetNext(tmp);
+  e.get()->SetNext(tmp);
   count++;
 }
 
@@ -248,16 +248,16 @@ inline void TList<T>::DelLast()
 }
 
 template<class T>
-inline void TList<T>::Del(TListElem<T>* e)
+inline void TList<T>::Del(TListIterator<T> e)
 {
   if (this->IsEmpty())
     throw - 1;
 
-  e->GetPrev()->SetNext(e->GetNext());
-  e->GetNext()->SetPrev(e->GetPrev());
+  e.get()->GetPrev()->SetNext(e.get()->GetNext());
+  e.get()->GetNext()->SetPrev(e.get()->GetPrev());
 
   count--;
-  delete e;
+  delete e.get();
 }
 
 template<class T>

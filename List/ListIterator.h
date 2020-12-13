@@ -10,8 +10,9 @@ class TListElem;
 template <class T>
 class TListIterator
 {
-public:
+protected:
   TListElem<T>* elem;
+public:
   TListIterator();
   TListIterator(TListElem<T>* _elem);
   TListIterator(const TListIterator<T>& _v);
@@ -19,6 +20,7 @@ public:
   TListIterator<T>& operator =(const TListIterator<T>& _v);
 
   bool IsEmpty();
+  TListElem<T>* get();
 
   TListIterator<T>& operator++();
   TListIterator<T>& operator--();
@@ -54,6 +56,12 @@ template<class T>
 inline bool TListIterator<T>::IsEmpty()
 {
   return elem == 0;
+}
+
+template<class T>
+inline TListElem<T>* TListIterator<T>::get()
+{
+  return elem;
 }
 
 template<class T>

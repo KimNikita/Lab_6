@@ -51,7 +51,7 @@ TEST(TList, can_correctly_ins)
   }
   for (int i = 0; i < size; i++)
   {
-    L.Ins(iterator.elem, i + 1);
+    L.Ins(iterator, i + 1);
     ++iterator;
   }
   for (int i = 0; i < size / 2 + size % 2; i++)
@@ -118,7 +118,7 @@ TEST(TList, can_correctly_del)
   }
   for (int i = 0; i < size / 2; i++)
   {
-    TListElem<int>* tmp = iterator.elem;
+    TListIterator<int> tmp = iterator;
     ++iterator;
     L.Del(tmp);
   }
