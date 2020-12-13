@@ -4,7 +4,7 @@
 
 using namespace std;
 
-template <class T>
+template <class T1>
 class TListElem;
 
 template <class T>

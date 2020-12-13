@@ -4,7 +4,7 @@
 #include "ListIterator.h"
 #include <vector>
 
-template <class T>
+template <class T1>
 class TListIterator;
 
 template <class T>
@@ -53,7 +53,7 @@ public:
   template <class T1>
   friend ofstream& operator<<(ofstream& ofstr, const TList<T1>& L);
 
-  template <class T>
+  template <class T1>
   friend class TListIterator;
 };
 
